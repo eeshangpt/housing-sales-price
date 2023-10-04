@@ -29,8 +29,8 @@
 #     1. [Data Dictionary]()
 #     2. [Missing Value Analysis]()
 #     3. [Cleaning the Data]()
-#         4. [Features]()
-#         5. [Target Variables]()
+#         1. [Features]()
+#         2. [Target Variables]()
 # 1. [Exploratory Data Analysis]()
 #     1. [Numerical Variables]()
 #     2. [Categorical Variables]()
@@ -43,10 +43,11 @@
 #     1. [Parameters]()
 #     2. [Ridge Regression]()
 #     3. [Lasso Regression]()
-# 1. <>
-#     1. rkld;f
-# 1. <>
-#     1. rkld;f
+# 1. [Conclusion]()
+# 1. [Subjective Question]()
+#     1.  [Doubling the values of alpha for Ridge and Lasso Regularization]()
+#         1.  [Ridge]()
+#         2.  [Lasso]()
 
 # %% [markdown]
 # ## Introduction to the problem
