@@ -29,14 +29,20 @@
 #     1. [Data Dictionary]()
 #     2. [Missing Value Analysis]()
 #     3. [Cleaning the Data]()
-# 1. <>
-#     1. rkld;f
-# 1. <>
-#     1. rkld;f
-# 1. <>
-#     1. rkld;f
-# 1. <>
-#     1. rkld;f
+#         4. [Features]()
+#         5. [Target Variables]()
+# 1. [Exploratory Data Analysis]()
+#     1. [Numerical Variables]()
+#     2. [Categorical Variables]()
+#     3. [Data Preparation]()
+# 1. [Data Preparation for Model Training]()
+#     1. [Train-Test Split]()
+#     2. [Scaling the Data]()
+# 1. [Linear Regression Model]()
+# 1. [Ridge and Lasso Regression]()
+#     1. [Parameters]()
+#     2. [Ridge Regression]()
+#     3. [Lasso Regression]()
 # 1. <>
 #     1. rkld;f
 # 1. <>
@@ -479,8 +485,8 @@ ridge_lr_best_model.fit(X_train, y_train)
 X_train.shape
 
 # %%
-coeff_df = pd.DataFrame(list(zip(X_train.columns, ridge_lr_best_model.coef_)), columns=['ColumnName', 'Coefficient'])
-coeff_df.sample(15)
+ridge_coeff_df = pd.DataFrame(list(zip(X_train.columns, ridge_lr_best_model.coef_)), columns=['ColumnName', 'Coefficient'])
+ridge_coeff_df.sample(15)
 
 # %%
 y_tr_pred = ridge_lr_best_model.predict(X_train)
@@ -515,8 +521,8 @@ lasso_lr_best_model = Lasso(alpha=lasso_lr_cv.best_params_['alpha'])
 lasso_lr_best_model.fit(X_train, y_train)
 
 # %%
-coeff_df = pd.DataFrame(list(zip(X_train.columns, lasso_lr_best_model.coef_)), columns=['ColumnName', 'Coefficient'])
-coeff_df.sample(15)
+lasso_coeff_df = pd.DataFrame(list(zip(X_train.columns, lasso_lr_best_model.coef_)), columns=['ColumnName', 'Coefficient'])
+lasso_coeff_df[lasso_coeff_df.Coefficient != 0].shape
 
 # %%
 y_tr_pred = lasso_lr_best_model.predict(X_train)
@@ -532,4 +538,92 @@ y_ts_pred = lasso_lr_best_model.predict(X_test)
 print(f"R2 score for the test data is {r2_score(y_test, y_ts_pred)}")
 print(f"MSE for the test data is {mean_squared_error(y_test, y_ts_pred)}")
 
+# %% [markdown]
+# ## Conclusion
+
 # %%
+ridge_coeff_df[ridge_coeff_df.Coefficient != 0]
+
+# %%
+lasso_coeff_df[lasso_coeff_df.Coefficient != 0]
+
+# %% [markdown]
+# I would suggest that we use **Lasso Regression** as the $R^2$ are comparable but the number of features are much less in the **Lasso Regression Model** as compared to **Ridge Regression Model**. 
+
+# %%
+lasso_coeff_df[lasso_coeff_df.Coefficient != 0].sort_values(by=['Coefficient'], ascending=False)
+
+# %% [markdown]
+# Important features that positively affect the price are:
+# - GrLivArea
+# - GarageCar
+# - Fireplaces
+
+# %% [markdown]
+# Important features that negatively affect the price are:
+# - LastRemod
+# - BuiltAge
+# - MSZoning
+# - OverallQual
+
+# %% [markdown]
+# ## Subjective Questions
+
+# %% [markdown]
+# ### Doubling the values of alpha for Ridge and Lasso Regularization
+
+# %% [markdown]
+# #### Ridge
+
+# %%
+ridge_alpha = ridge_lr_cv.best_params_['alpha']
+ridge_lr_best_model_2 = Ridge(alpha=ridge_alpha*2)
+ridge_lr_best_model_2.fit(X_train, y_train)
+
+# %%
+ridge_coeff_df_2 = pd.DataFrame(list(zip(X_train.columns, ridge_lr_best_model_2.coef_)), columns=['ColumnName', 'Coefficient'])
+ridge_coeff_df_2.sort_values(by=['Coefficient'], ascending=False)
+
+# %%
+ridge_coeff_comparison = ridge_coeff_df.merge(ridge_coeff_df_2, on='ColumnName', how='inner', suffixes=['Original', 'Double']).drop_duplicates()
+ridge_coeff_comparison
+
+# %% [markdown]
+# #### Lasso
+
+# %%
+lasso_alpha = lasso_lr_cv.best_params_['alpha']
+lasso_lr_best_model_2 = Lasso(alpha=lasso_alpha*2)
+lasso_lr_best_model_2.fit(X_train, y_train)
+
+# %%
+lasso_coeff_df_2 = pd.DataFrame(list(zip(X_train.columns, lasso_lr_best_model_2.coef_)), columns=['ColumnName', 'Coefficient'])
+lasso_coeff_df_2.sort_values(by=['Coefficient'], ascending=False)
+
+# %%
+lasso_coeff_comparison = lasso_coeff_df.merge(lasso_coeff_df_2, on='ColumnName', how='inner', suffixes=['Original', 'Double']).drop_duplicates()
+lasso_coeff_comparison
+
+# %% [markdown]
+# Ridge Regression for new model
+
+# %%
+y_pred_2 = ridge_lr_best_model_2.predict(X_test)
+
+# %%
+r2_score(y_test, y_pred_2)
+
+# %%
+mean_squared_error(y_test, y_pred_2)
+
+# %% [markdown]
+# Ridge Regression for new model
+
+# %%
+y_pred_2 = lasso_lr_best_model_2.predict(X_test)
+
+# %%
+r2_score(y_test, y_pred_2)
+
+# %%
+mean_squared_error(y_test, y_pred_2)
